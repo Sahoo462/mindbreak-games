@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ game.name }} — MindBreak{% endblock %}
+{% block content %}
+<section class="detail-page" data-mindbreak-game="{{ game.slug }}">
+  <a class="back-link" href="{{ url_for('home') }}#game-library"><span aria-hidden="true">←</span> Back to all games</a>
+  <div class="game-heading">
+    <div class="detail-art art-{{ game.accent }}"><img src="{{ url_for('static', filename='graphics/' + game.image) }}" alt="" fetchpriority="high"></div>
+    <div class="detail-copy">
+      <span class="eyebrow">{{ game.category }} · {{ game.time }}</span>
+      <h1>{{ game.name }}</h1>
+      <p>{{ game.description }}</p>
+      <span class="coming-badge ready-badge"><span></span> READY TO PLAY</span>
+      <a class="customize-game-link" href="{{ url_for('customize') }}?game={{ game.slug }}">Customize this game's artwork <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+  <section class="play-panel" aria-label="{{ game.name }} game">
+    {% if game.slug == "tic-tac-toe" %}
+    <div class="game-toolbar">
+      <label class="game-select-label">Mode
+        <select id="ttt-mode"><option value="local">Two players</option><option value="ai">Play the computer</option></select>
+      </label>
+      <div class="game-scoreboard" aria-label="Score"><span>✕ <b id="ttt-x-score">0</b></span><span>Draw <b id="ttt-draw-score">0</b></span><span>○ <b id="ttt-o-score">0</b></span></div>
+      <button class="game-button" id="ttt-restart" type="button">New round</button>
+    </div>
+    <div class="board-game ttt-board" id="ttt-board" role="grid" aria-label="Tic-Tac-Toe board"></div>
+    <p class="game-status" id="ttt-status" aria-live="polite">X goes first. Pick a square!</p>
+    <p class="game-help">Take turns choosing a square. Line up three marks to win. Use <kbd>Tab</kbd> and <kbd>Enter</kbd> or tap a square.</p>
+    {% elif game.slug == "connect-four" %}
+    <div class="game-toolbar">
+      <div class="game-scoreboard"><span><i class="score-disc red-disc"></i> Red <b id="c4-red-score">0</b></span><span><i class="score-disc yellow-disc"></i> Yellow <b id="c4-yellow-score">0</b></span></div>
+      <button class="game-button" id="c4-restart" type="button">New game</button>
+    </div>
+    <div class="connect-board" id="connect-board" role="grid" aria-label="Connect Four board"></div>
+    <p class="game-status" id="c4-status" aria-live="polite">Red starts. Choose a column!</p>
+    <p class="game-help">Take turns dropping a disc. Connect four horizontally, vertically, or diagonally. Tap a column or focus it and press <kbd>Enter</kbd>.</p>
+    {% elif game.slug == "sudoku" %}
+    <div class="game-toolbar sudoku-toolbar">
+      <label class="game-select-label">Difficulty <select id="sudoku-difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></label>
+      <div class="game-scoreboard"><span>Hints <b id="sudoku-hints">3</b></span></div>
+      <button class="game-button" id="sudoku-hint" type="button">Use a hint</button>
+      <button class="game-button" id="sudoku-restart" type="button">New puzzle</button>
+    </div>
+    <div class="sudoku-layout"><div class="sudoku-board" id="sudoku-board" role="grid" aria-label="Sudoku puzzle"></div>
+      <div class="sudoku-side"><p>Fill each row, column, and 3 × 3 box with the numbers 1–9.</p><div class="number-pad" id="sudoku-number-pad" aria-label="Number pad"></div><button class="game-button erase-button" id="sudoku-erase" type="button">Erase selected cell</button></div>
+    </div>
+    <p class="game-status" id="sudoku-status" aria-live="polite">Choose an empty square, then a number.</p>
+    <p class="game-help">Use the number keys 1–9 or the number pad. Conflicting entries are highlighted. A hint fills one square.</p>
+    {% elif game.slug == "memory-match" %}
+    <div class="game-toolbar">
+      <div class="game-scoreboard"><span>Moves <b id="memory-moves">0</b></span><span>Time <b id="memory-timer">00:00</b></span><span>Pairs <b id="memory-pairs">0 / 8</b></span></div>
+      <button class="game-button" id="memory-restart" type="button">Shuffle &amp; restart</button>
+    </div>
+    <div class="memory-board" id="memory-board" aria-label="Memory Match cards"></div>
+    <p class="game-status" id="memory-status" aria-live="polite">Find all eight pairs. Flip two cards to begin!</p>
+    <p class="game-help">Flip two cards at a time. Matching characters stay face up; try to remember where each one is hiding.</p>
+    {% elif game.slug in ["snake", "space-invaders", "bubble-shooter", "endless-runner"] %}
+    <div class="game-toolbar arcade-toolbar">
+      <div class="game-scoreboard"><span>Score <b id="arcade-score">0</b></span>
+        {% if game.slug == "space-invaders" %}<span id="arcade-lives-wrap">Lives <b id="arcade-lives">3</b></span>{% elif game.slug == "bubble-shooter" %}<span id="arcade-lives-wrap">Shots <b id="arcade-lives">0</b></span>{% endif %}
+        {% if game.slug == "space-invaders" %}<span id="arcade-wave-wrap">Wave <b id="arcade-wave">1</b></span>{% endif %}
+      </div>
+      <div class="arcade-actions">{% if game.slug != "bubble-shooter" %}<button class="game-button" id="arcade-pause" type="button" hidden>Pause</button>{% endif %}<button class="game-button" id="arcade-restart" type="button">Start game</button></div>
+    </div>
+    <div class="canvas-shell"><canvas id="arcade-canvas" aria-label="{{ game.name }} game area"></canvas><div class="canvas-overlay" id="canvas-overlay"><strong id="canvas-overlay-title">Ready when you are</strong><span id="canvas-overlay-message">Press Start game to play.</span><button class="button button-primary" id="canvas-start" type="button">Start game <span aria-hidden="true">↗</span></button></div></div>
+    <div class="touch-controls" id="touch-controls" {% if game.slug not in ["snake", "space-invaders", "endless-runner"] %}hidden{% endif %}></div>
+    <p class="game-status" id="arcade-status" aria-live="polite">Press Start game when you're ready.</p>
+    <p class="game-help" id="arcade-help"></p>
+    {% elif game.slug == "2048" %}
+    <div class="game-toolbar">
+      <div class="game-scoreboard"><span>Score <b id="2048-score">0</b></span><span>Best <b id="2048-best">0</b></span></div>
+      <button class="game-button" id="2048-restart" type="button">New game</button>
+    </div>
+    <div class="game2048-board" id="2048-board" role="grid" aria-label="2048 game board"></div>
+    <p class="game-status" id="2048-status" aria-live="polite">Slide the tiles and combine matching numbers!</p>
+    <p class="game-help">Use arrow keys, WASD, or swipe. Matching tiles merge when they move together. Reach 2048 to win.</p>
+    {% elif game.slug == "whack-a-mole" %}
+    <div class="game-toolbar">
+      <div class="game-scoreboard"><span>Score <b id="mole-score">0</b></span><span>Time <b id="mole-time">30</b>s</span><span>Best <b id="mole-best">0</b></span></div>
+      <button class="game-button" id="mole-restart" type="button">Start game</button>
+    </div>
+    <div class="mole-board" id="mole-board" role="group" aria-label="Whack-a-Mole garden"></div>
+    <p class="game-status" id="mole-status" aria-live="polite">Start a round and tap the garden visitors!</p>
+    <p class="game-help">Tap or press Enter/Space on a mole to catch it before it ducks away. You have 30 seconds.</p>
+    {% elif game.slug in ["breakout", "flappy-bird"] %}
+    <div class="game-toolbar arcade-toolbar">
+      <div class="game-scoreboard"><span>Score <b id="arcade-score">0</b></span><span id="arcade-lives-wrap">Lives <b id="arcade-lives">3</b></span><span>Best <b id="arcade-best">0</b></span></div>
+      <div class="arcade-actions"><button class="game-button" id="arcade-pause" type="button" hidden>Pause</button><button class="game-button" id="arcade-restart" type="button">Start game</button></div>
+    </div>
+    <div class="canvas-shell"><canvas id="arcade-canvas" aria-label="{{ game.name }} game area"></canvas><div class="canvas-overlay" id="canvas-overlay"><strong id="canvas-overlay-title">Ready when you are</strong><span id="canvas-overlay-message">Press Start game to play.</span><button class="button button-primary" id="canvas-start" type="button">Start game <span aria-hidden="true">↗</span></button></div></div>
+    <p class="game-status" id="arcade-status" aria-live="polite">Press Start game when you're ready.</p>
+    <p class="game-help" id="arcade-help"></p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/games.css') }}">{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/games/' + game.slug + '.js') }}" defer></script>{% endblock %}

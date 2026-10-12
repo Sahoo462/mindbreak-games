@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}MindBreak — a little play goes a long way{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="eyebrow-sparkle" aria-hidden="true">✳</span> YOUR LITTLE CORNER OF CALM</span>
+    <h1 id="hero-title">A little play<br>goes a <span>long way.</span></h1>
+    <p class="hero-description">Step away from the scroll. Find a tiny game, clear your head, and come back feeling a little more you.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="#game-library">Play Now <span aria-hidden="true">↗</span></a>
+      <a class="text-link" href="#customize">Make it yours <span aria-hidden="true">↓</span></a>
+    </div>
+    <div class="hero-proof"><div class="avatar-stack" aria-hidden="true"><span>☀</span><span>✿</span><span>☁</span></div><span>A softer kind of screen time</span></div>
+  </div>
+  <div class="hero-art" aria-label="Illustration of a happy little planet taking a break">
+    <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+    <span class="hero-star star-one" aria-hidden="true">✦</span><span class="hero-star star-two" aria-hidden="true">✳</span>
+    <span class="hero-star star-three" aria-hidden="true">·</span>
+    <div class="hero-planet"><div class="planet-ring"></div><div class="planet-face"><span class="planet-eye"></span><span class="planet-eye"></span><span class="planet-smile"></span></div><span class="planet-cheek cheek-left"></span><span class="planet-cheek cheek-right"></span></div>
+    <div class="floating-note note-top"><span>✿</span> take a breather</div>
+    <div class="floating-note note-bottom"><span>♡</span> just one round</div>
+    <div class="hero-art-caption">GOOD VIBRATIONS, LOADING...</div>
+  </div>
+  <div class="hero-bottomline"><span>01 / {{ '%02d'|format(games|length) }}</span><span>YOUR NEXT RESET IS JUST A CLICK AWAY</span><span aria-hidden="true">↓</span></div>
+</section>
+
+<section class="library-section section-wrap" id="game-library" aria-labelledby="library-title">
+  <div class="section-heading">
+    <div><span class="eyebrow">A MOMENT FOR YOU</span><h2 id="library-title">Pick your <span>kind of play.</span></h2><p class="section-intro">Quick little escapes, whenever you need one.</p></div>
+    <label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><span class="sr-only">Search games</span><input id="game-search" type="search" placeholder="Find your happy place..." autocomplete="off"><kbd>/</kbd></label>
+  </div>
+  <div class="library-tools">
+    <div class="filter-list" role="group" aria-label="Filter games by category">
+      <button class="filter-chip is-active" type="button" data-category="All" aria-pressed="true">All games <span>{{ games|length }}</span></button>
+      <button class="filter-chip" type="button" data-category="Puzzle" aria-pressed="false">Puzzle</button>
+      <button class="filter-chip" type="button" data-category="Arcade" aria-pressed="false">Arcade</button>
+      <button class="filter-chip" type="button" data-category="Strategy" aria-pressed="false">Strategy</button>
+    </div>
+    <span class="results-label" id="results-count" aria-live="polite">{{ games|length }} little escapes</span>
+  </div>
+  <div class="game-grid" id="game-grid">
+    {% for game in games %}
+    <article class="game-card" data-name="{{ game.name|lower }}" data-category="{{ game.category }}">
+      <a class="game-art art-{{ game.accent }}" href="{{ url_for('game_details', slug=game.slug) }}" aria-label="View {{ game.name }} details">
+        <img src="{{ url_for('static', filename='graphics/' + game.image) }}" alt="" loading="lazy">
+        <span class="art-index">0{{ loop.index }}</span>
+        <span class="art-status">READY TO PLAY</span>
+      </a>
+      <div class="game-card-copy">
+        <div class="card-meta"><span>{{ game.category }}</span><span class="meta-dot" aria-hidden="true">·</span><span>{{ game.time }}</span></div>
+        <h3><a href="{{ url_for('game_details', slug=game.slug) }}">{{ game.name }}</a></h3>
+        <p>{{ game.description }}</p>
+        <a class="card-action" href="{{ url_for('game_details', slug=game.slug) }}">Play this game <span aria-hidden="true">↗</span></a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <div class="empty-state" id="empty-state" hidden><span aria-hidden="true">☁</span><h3>No games found just yet</h3><p>Try a different name or category and we'll find your happy place.</p><button type="button" class="text-link reset-search">Clear search and filters <span aria-hidden="true">↗</span></button></div>
+  <p class="library-footnote"><span aria-hidden="true">✳</span> {{ games|length }} little worlds, ready whenever you are.</p>
+</section>
+
+<section class="customize-section" id="customize" aria-labelledby="customize-title">
+  <div class="customize-inner">
+    <div class="customize-copy">
+      <span class="eyebrow">A LITTLE MORE YOU</span>
+      <h2 id="customize-title">Your games.<br><span>Your little universe.</span></h2>
+      <p>Choose original character artwork for your game pieces, set a visual theme, or upload art of your own in the character studio.</p>
+      <a class="button button-primary customize-studio-link" href="{{ url_for('customize') }}">Open character studio <span aria-hidden="true">↗</span></a>
+      <div class="custom-control">
+        <span class="control-label">CHOOSE A MOOD</span>
+        <div class="theme-options" role="group" aria-label="Choose a visual theme">
+          <button type="button" class="theme-option is-selected" data-look="dreamscape" aria-pressed="true"><span class="swatch swatch-dream"></span>Dreamscape</button>
+          <button type="button" class="theme-option" data-look="pixel" aria-pressed="false"><span class="swatch swatch-pixel"></span>Pixel grove</button>
+          <button type="button" class="theme-option" data-look="cosmic" aria-pressed="false"><span class="swatch swatch-cosmic"></span>Cosmic pop</button>
+        </div>
+      </div>
+      <div class="custom-control character-control">
+        <span class="control-label">PICK A SIDEKICK</span>
+        <div class="character-options" role="group" aria-label="Choose a preview character">
+          <button type="button" class="character-option is-selected" data-character="sun" aria-label="Choose sunny character" aria-pressed="true">☼</button>
+          <button type="button" class="character-option" data-character="moon" aria-label="Choose moon character" aria-pressed="false">☾</button>
+          <button type="button" class="character-option" data-character="star" aria-label="Choose star character" aria-pressed="false">✦</button>
+          <button type="button" class="character-option" data-character="flower" aria-label="Choose flower character" aria-pressed="false">✿</button>
+        </div>
+      </div>
+      <span class="preview-note"><span aria-hidden="true">↗</span> Just a preview — saved on this device</span>
+    </div>
+    <div class="custom-preview-wrap">
+      <span class="preview-sticker sticker-top">MADE FOR YOU</span>
+      <div class="custom-preview" id="custom-preview">
+        <div class="preview-topline"><span>YOUR LITTLE WORLD</span><span class="preview-online"><i></i> IN A GOOD MOOD</span></div>
+        <div class="preview-board">
+          <div class="preview-character character-sun" data-preview-character>☼</div>
+          <div class="preview-tile tile-empty"><span>?</span></div>
+          <div class="preview-tile tile-empty"><span>?</span></div>
+          <div class="preview-tile tile-empty"><span>?</span></div>
+          <div class="preview-character character-sun" data-preview-character>☼</div>
+          <div class="preview-tile tile-empty"><span>?</span></div>
+          <div class="preview-tile tile-empty"><span>?</span></div>
+          <div class="preview-tile tile-empty"><span>?</span></div>
+          <div class="preview-character character-sun" data-preview-character>☼</div>
+        </div>
+        <div class="preview-caption"><span>little steps count, too</span><span aria-hidden="true">♡</span></div>
+      </div>
+      <span class="preview-sticker sticker-bottom">✳ YOUR TURN</span>
+    </div>
+  </div>
+</section>
+<section class="closing-note"><span aria-hidden="true">✳</span><p>You've done enough for today. <strong>Now play a little.</strong></p><span aria-hidden="true">✳</span></section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Lost in space — MindBreak{% endblock %}
+{% block content %}
+<section class="not-found">
+  <div class="not-found-orbit" aria-hidden="true">✦</div>
+  <span class="eyebrow">A LITTLE DETOUR</span>
+  <h1>Oops, this page<br>is taking a <span>nap.</span></h1>
+  <p>We couldn't find that page. Let's get you back to the fun stuff.</p>
+  <a class="button button-primary" href="{{ url_for('home') }}">Back to MindBreak <span aria-hidden="true">↗</span></a>
+</section>
+{% endblock %}

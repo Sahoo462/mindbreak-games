@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Make it yours — MindBreak{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/games.css') }}">{% endblock %}
+{% block content %}
+<section class="detail-page customization-page">
+  <a class="back-link" href="{{ url_for('home') }}"><span aria-hidden="true">←</span> Back to MindBreak</a>
+  <div class="customize-intro">
+    <span class="eyebrow">YOUR LITTLE UNIVERSE</span>
+    <h1>Make it <span>yours.</span></h1>
+    <p>Choose original character art for your favorite games, or bring your own. Your choices stay on this device.</p>
+  </div>
+  <div class="play-panel customization-panel">
+    <div class="customize-steps">
+      <label class="game-select-label">Choose a game
+        <select id="custom-game-select" aria-label="Choose a game">
+          {% for game in games %}<option value="{{ game.slug }}">{{ game.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="game-select-label">Global visual theme
+        <select id="custom-global-look-select" aria-label="Choose the global visual theme">
+          <option value="dreamscape">Dreamscape</option><option value="pixel">Pixel grove</option><option value="cosmic">Cosmic pop</option>
+        </select>
+      </label>
+      <label class="game-select-label">This game's theme
+        <select id="custom-look-select" aria-label="Choose this game's theme override">
+          <option value="">Use global theme</option><option value="dreamscape">Dreamscape</option><option value="pixel">Pixel grove</option><option value="cosmic">Cosmic pop</option>
+        </select>
+      </label>
+    </div>
+    <p class="customize-instructions">Pick artwork for each game role below. Character art only changes the visuals—not how a game plays or scores.</p>
+    <div id="custom-role-list" class="custom-role-list" aria-live="polite"></div>
+    <section class="upload-panel" aria-labelledby="upload-title">
+      <div><span class="eyebrow">BRING YOUR OWN ART</span><h2 id="upload-title">Your characters, your way.</h2><p>Upload PNG, JPEG, or WebP artwork (up to 5 MB each). Transparent images are supported.</p></div>
+      <label class="upload-drop">
+        <span class="upload-icon" aria-hidden="true">＋</span>
+        <span>Choose an image from your device</span>
+        <small>PNG, JPG, JPEG, WebP · 5 MB max</small>
+        <input id="character-upload" type="file" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" multiple>
+      </label>
+      <p id="upload-message" class="upload-message" role="status" aria-live="polite">Uploads are stored privately in this browser on this device.</p>
+    </section>
+    <div class="uploaded-section"><h2>Your uploaded artwork</h2><div id="uploaded-assets" class="uploaded-assets"></div></div>
+    <div class="customize-actions">
+      <button type="button" class="game-button" id="custom-reset-game">Reset this game's art</button>
+      <button type="button" class="game-button" id="custom-reset-all">Reset all artwork</button>
+      <span id="custom-save-status" role="status" aria-live="polite">Your choices save automatically.</span>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customize.js') }}" defer></script>
+{% endblock %}
